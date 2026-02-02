@@ -3,170 +3,115 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>נביז הולנטיין 💗</title>
+  <title>ולנטיין 💗</title>
 
-  <!-- פונט Rubik עם תמיכה בעברית -->
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: "Rubik", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #ffc0cb; /* ורוד */
+      font-family: "Rubik", sans-serif;
+      background: #ffc0cb;
       min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       text-align: center;
-      color: #333;
+      margin: 0;
     }
 
-    .container {
-      padding: 24px;
-      max-width: 480px;
+    .screen {
       width: 100%;
+      max-width: 400px;
+      padding: 24px;
     }
 
     h1 {
       font-size: 2rem;
       margin-bottom: 24px;
-      line-height: 1.4;
     }
 
     .buttons {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 12px;
       position: relative;
+      height: 80px;
     }
 
     button {
-      font-family: "Rubik", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 1.2rem;
-      padding: 10px 26px;
+      padding: 12px 28px;
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
-      z-index: 1;
+      font-family: "Rubik", sans-serif;
     }
 
     #yesBtn {
-      background-color: #ff4f8b;
-      color: #fff;
-    }
-
-    #yesBtn:hover {
-      background-color: #ff2b72;
-      transform: scale(1.05);
+      background: #ff4f8b;
+      color: white;
+      z-index: 2;
     }
 
     #noBtn {
-      background-color: #ffffff;
+      background: white;
       color: #ff4f8b;
       border: 2px solid #ff4f8b;
-    }
-
-    #noBtn:active {
-      transform: scale(0.95);
-    }
-
-    .message {
-      margin-top: 18px;
-      font-size: 1rem;
-      min-height: 1.2em;
-    }
-
-    .heart {
-      font-size: 2.5rem;
-      margin-bottom: 8px;
+      top: 50px;
+      z-index: 1;
     }
 
     .hidden {
       display: none;
     }
 
-    /* מסך החגיגה */
-    .gif {
-      width: 100%;
-      max-width: 320px;
+    img {
+      max-width: 100%;
       border-radius: 16px;
-      margin: 16px auto;
-      display: block;
-    }
-
-    .celebrate-text {
-      font-size: 1.4rem;
-      margin-top: 12px;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <!-- מסך השאלה -->
-  <div class="container" id="questionScreen">
-    <div class="heart">💗</div>
-    <h1>נביז תרצי להיות הולנטיין שלי?</h1>
 
-    <div class="buttons">
-      <button id="yesBtn">כן</button>
-      <button id="noBtn">לא</button>
-    </div>
+<!-- מסך שאלה -->
+<div class="screen" id="question">
+  <h1>נביז תרצי להיות הולנטיין שלי?</h1>
 
-    <div class="message" id="message"></div>
+  <div class="buttons">
+    <button id="yesBtn">כן</button>
+    <button id="noBtn">לא</button>
   </div>
+</div>
 
-  <!-- מסך החגיגה -->
-  <div class="container hidden" id="celebrateScreen">
-    <div class="heart">💘</div>
-    <h1>יייי! יש לנו הולנטיין! 🎉</h1>
+<!-- מסך חגיגה -->
+<div class="screen hidden" id="celebrate">
+  <h1>יששש! 🎉💘</h1>
+  <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif">
+</div>
 
-    <!-- כאן אפשר להחליף ל-GIF אחר אם תרצה -->
-    <img
-      class="gif"
-      src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif"
-      alt="חגיגה"
-    />
+<script>
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+  const question = document.getElementById("question");
+  const celebrate = document.getElementById("celebrate");
 
-    <div class="celebrate-text">
-      נביז + עידו = 💞<br>
-      הולנטיין רשמי!
-    </div>
-  </div>
+  let scale = 1;
 
-  <script>
-    const noBtn = document.getElementById("noBtn");
-    const yesBtn = document.getElementById("yesBtn");
-    const message = document.getElementById("message");
-    const questionScreen = document.getElementById("questionScreen");
-    const celebrateScreen = document.getElementById("celebrateScreen");
+  noBtn.addEventListener("click", () => {
+    scale += 0.4;
+    yesBtn.style.transform = `translateX(-50%) scale(${scale})`;
 
-    let yesScale = 1;
+    if (scale > 2.2) {
+      noBtn.style.display = "none";
+    }
+  });
 
-    // כשלוחצים על "לא" – ה"כן" גדל כל פעם
-    noBtn.addEventListener("click", () => {
-      yesScale *= 1.25; // כל לחיצה מגדילה את הכפתור
-      yesBtn.style.transform = `scale(${yesScale})`;
-      yesBtn.style.zIndex = 2; // שיהיה מעל כפתור ה"לא"
-      message.textContent = "כדאי לך 😉";
+  yesBtn.addEventListener("click", () => {
+    question.classList.add("hidden");
+    celebrate.classList.remove("hidden");
+  });
+</script>
 
-      // כשה"כן" ממש גדול – נעלים את ה"לא"
-      if (yesScale >= 2.6) {
-        noBtn.style.opacity = "0";
-        noBtn.style.pointerEvents = "none";
-      }
-    });
-
-    // כשלוחצים "כן" – מעבר למסך החגיגה
-    yesBtn.addEventListener("click", () => {
-      questionScreen.classList.add("hidden");
-      celebrateScreen.classList.remove("hidden");
-    });
-  </script>
 </body>
 </html>
