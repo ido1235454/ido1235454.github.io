@@ -154,6 +154,7 @@
 
   let scale = 1;
   let clicks = 0;
+  let moveDown = 0; // 🔽 כמה הכפתור ירד
 
   // 3 הטקסטים הקודמים + עוד שניים: "די ילדה", "שבי שבי"
   const texts = ["כדאי לך", "בטוח?", "אין דבר כזה!", "די ילדה", "שבי שבי"];
@@ -161,7 +162,8 @@
   noBtn.addEventListener("click", () => {
     // כל לחיצה – כפתור ה"כן" גדל ומתחיל לכסות את כפתור ה"לא"
     scale += 0.50;
-    yesBtn.style.transform = `scale(${scale})`;
+    moveDown += 6; // כל לחיצה יורד עוד קצת (אפשר לשחק עם המספר)
+    yesBtn.style.transform = `scale(${scale}) translateY(${moveDown}px)`;
 
     // החלפת טקסטים לפי סדר
     if (clicks < texts.length) {
