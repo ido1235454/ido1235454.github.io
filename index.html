@@ -17,11 +17,14 @@
       align-items: center;
       min-height: 100vh;
       text-align: center;
+      overflow: hidden; /* כדי שהלבבות לא יצאו מהמסך */
     }
 
     .screen {
       max-width: 420px;
       padding: 20px;
+      position: relative;
+      z-index: 2; /* מעל הלבבות */
     }
 
     img {
@@ -35,15 +38,17 @@
       margin-bottom: 20px;
     }
 
+    /* כפתורים אחד ליד השני */
     .buttons {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
       position: relative;
-      height: 90px;
     }
 
     button {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
       font-size: 1.2rem;
       padding: 12px 28px;
       border-radius: 999px;
@@ -52,31 +57,81 @@
       font-family: "Rubik", sans-serif;
       transition: transform 0.25s ease;
       white-space: nowrap;
+      position: relative;
     }
 
     #yesBtn {
       background: #ff4f8b;
       color: white;
-      z-index: 2;
+      z-index: 2; /* תמיד מעל כפתור הלא */
     }
 
     #noBtn {
       background: white;
       color: #ff4f8b;
       border: 2px solid #ff4f8b;
-      top: 50px;
       z-index: 1;
     }
 
     .hidden {
       display: none;
     }
+
+    /* 💖 לבבות שעפים ברקע */
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .hearts span {
+      position: absolute;
+      bottom: -40px;
+      color: #ff4f8b;
+      opacity: 0.7;
+      font-size: 24px;
+      animation: floatUp 8s linear infinite;
+    }
+
+    .hearts span:nth-child(1) { left: 10%; animation-delay: 0s; font-size: 26px; }
+    .hearts span:nth-child(2) { left: 25%; animation-delay: 2s; font-size: 34px; }
+    .hearts span:nth-child(3) { left: 40%; animation-delay: 1s; font-size: 28px; }
+    .hearts span:nth-child(4) { left: 60%; animation-delay: 3s; font-size: 32px; }
+    .hearts span:nth-child(5) { left: 75%; animation-delay: 0.5s; font-size: 30px; }
+    .hearts span:nth-child(6) { left: 90%; animation-delay: 4s; font-size: 24px; }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(-110vh) translateX(-10px);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
 
+<!-- לבבות ברקע -->
+<div class="hearts">
+  <span>💗</span>
+  <span>💖</span>
+  <span>💘</span>
+  <span>💝</span>
+  <span>💓</span>
+  <span>💕</span>
+</div>
+
+<!-- מסך שאלה -->
 <div class="screen" id="questionScreen">
-  <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXl2eDQ5MG16ZXY0NGV1YjM3bmoweGllbXZkOWUwYWRjdm1ia3VqbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uv0VSp6Eqlu1nGvkZ0/giphy.gif">
+  <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXl2eDQ5MG16ZXY0NGV1YjM3bmoweGllbXZkOWUwYWRjdm1ia3VqbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uv0VSp6Eqlu1nGvkZ0/giphy.gif" alt="gif">
   <h1>נביז רוצה להיות איתי וולנטיין?</h1>
 
   <div class="buttons">
@@ -85,8 +140,9 @@
   </div>
 </div>
 
+<!-- מסך סיום -->
 <div class="screen hidden" id="finalScreen">
-  <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMm1iNTU4NXNmaHhldzVjcWFmdTh1YzNkeDIwd2Z0bG80OGI0ZHV6bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wsJHi6a1JwoXC/giphy.gif">
+  <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMm1iNTU4NXNmaHhldzVjcWFmdTh1YzNkeDIwd2Z0bG80OGI0ZHV6bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wsJHi6a1JwoXC/giphy.gif" alt="celebrate">
   <h1>ניפגש!! 💘</h1>
 </div>
 
@@ -98,17 +154,22 @@
 
   let scale = 1;
   let clicks = 0;
-  const texts = ["כדאי לך", "בטוח?", "אין דבר כזה!"];
+
+  // 3 הטקסטים הקודמים + עוד שניים: "די ילדה", "שבי שבי"
+  const texts = ["כדאי לך", "בטוח?", "אין דבר כזה!", "די ילדה", "שבי שבי"];
 
   noBtn.addEventListener("click", () => {
+    // כל לחיצה – כפתור ה"כן" גדל ומתחיל לכסות את כפתור ה"לא"
     scale += 0.35;
-    yesBtn.style.transform = `translateX(-50%) scale(${scale})`;
+    yesBtn.style.transform = `scale(${scale})`;
 
+    // החלפת טקסטים לפי סדר
     if (clicks < texts.length) {
       noBtn.textContent = texts[clicks];
     }
 
-    if (scale >= 2.4) {
+    // אחרי כל הטקסטים – הכפתור שמייצג "לא" נעלם
+    if (clicks + 1 >= texts.length) {
       noBtn.style.display = "none";
     }
 
